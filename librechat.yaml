@@ -1,0 +1,32 @@
+version: 1.3.5
+
+webSearch:
+  searchProvider: "searxng"
+  searxngInstanceUrl: "${SEARXNG_INSTANCE_URL}"
+  scraperProvider: "firecrawl"
+  firecrawlApiUrl: "${FIRECRAWL_BASE_URL}"
+  allowedAddresses:
+    - "searxng:8080"
+    - "prarambha-local-scraper:8000"
+
+actions:
+  allowedDomains:
+    - "host.docker.internal"
+  allowedAddresses:
+    - "host.docker.internal:9000"
+
+endpoints:
+  agents:
+    capabilities:
+      - "tools"
+      - "web_search"
+      - "execute_code"
+      - "file_search"
+
+  custom:
+    - name: "Qwen 3.6"
+      apiKey: "dummy"
+      baseURL: "http://45.115.219.97:20010/v1"
+      models:
+        default:
+          - "palmfuture/Qwen3.6-35B-A3B-GPTQ-Int4"

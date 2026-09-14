@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+requests
+websocket-client
+python-multipart
+pandas
+openpyxl
+pypdf
+python-docx
+reportlab
+matplotlib
+APScheduler

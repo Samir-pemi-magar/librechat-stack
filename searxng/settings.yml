@@ -1,0 +1,12 @@
+use_default_settings: true
+
+server:
+  secret_key: CHANGE_ME_TO_A_RANDOM_SECRET
+  bind_address: "0.0.0.0"
+  port: 8080
+  limiter: false
+
+search:
+  formats:
+    - html
+    - json

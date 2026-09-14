@@ -1,0 +1,60 @@
+services:
+  librechat:
+    image: prarambha-librechat:custom
+    container_name: LibreChat
+
+    ports:
+      - "3080:3080"
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./librechat.yaml:/app/librechat.yaml:ro
+
+    depends_on:
+      - mongodb
+      - searxng
+
+    networks:
+      - librechat
+
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:latest
+    container_name: chat-mongodb
+
+    volumes:
+      - ./data-node:/data/db
+
+    networks:
+      - librechat
+
+    restart: unless-stopped
+
+  searxng:
+    image: searxng/searxng:latest
+    container_name: searxng
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      - ./searxng:/etc/searxng:rw
+
+    networks:
+      - librechat
+
+    restart: unless-stopped
+
+  local-scraper:
+    image: prarambha-local-scraper:latest
+    container_name: prarambha-local-scraper
+    networks:
+      - librechat
+    restart: unless-stopped
+
+networks:
+  librechat:
+    driver: bridge
