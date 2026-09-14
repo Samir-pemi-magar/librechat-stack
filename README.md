@@ -1,5 +1,26 @@
 # Prarambha LibreChat + Code Intelligence Stack
 
+## 🎥 Project Demo
+
+A recorded demonstration of the complete working system is available below.
+
+▶️ **[Watch the Project Demo](https://youtu.be/gcAd0Us2TVo)**
+
+The demonstration covers:
+
+- LibreChat employee chat interface
+- Prarambha Agent integration
+- Qwen model interaction
+- Tool calling
+- `execute_code` action
+- FastAPI code execution adapter
+- Docker sandbox execution
+- Python/Pandas data processing
+- Excel processing
+- PDF processing
+- Generated file creation and downloads
+
+---
 ## 1. Overview
 
 This project provides a LibreChat-based internal AI system designed to combine conversational AI, web search, code execution, internal company data, automated data analysis, reporting, and email delivery.
