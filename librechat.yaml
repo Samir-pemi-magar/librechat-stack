@@ -26,7 +26,7 @@ endpoints:
   custom:
     - name: "Qwen 3.6"
       apiKey: "dummy"
-      baseURL: "http://45.115.219.97:20010/v1"
+      baseURL: "${QWEN_BASE_URL}"
       models:
         default:
           - "palmfuture/Qwen3.6-35B-A3B-GPTQ-Int4"

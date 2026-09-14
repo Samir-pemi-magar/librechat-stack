@@ -13,8 +13,21 @@ INCOMING_DIR = BASE_DIR / "incoming"
 REPORT_DIR = BASE_DIR / "reports"
 
 
-QWEN_URL = "http://45.115.219.97:20010/v1/chat/completions"
-QWEN_MODEL = "palmfuture/Qwen3.6-35B-A3B-GPTQ-Int4"
+# Qwen configuration
+# Set QWEN_BASE_URL in your local .env file.
+# Example:
+# QWEN_BASE_URL=http://your-server:20010/v1
+QWEN_BASE_URL = os.getenv(
+    "QWEN_BASE_URL",
+    "http://localhost:20010/v1",
+).rstrip("/")
+
+QWEN_URL = f"{QWEN_BASE_URL}/chat/completions"
+
+QWEN_MODEL = os.getenv(
+    "QWEN_MODEL",
+    "palmfuture/Qwen3.6-35B-A3B-GPTQ-Int4",
+)
 
 
 def find_latest_workbook():
@@ -92,7 +105,10 @@ def call_qwen(prompt):
 
     print("QWEN FINISH_REASON:", choice.get("finish_reason"))
     print("QWEN CONTENT_LENGTH:", len(message.get("content") or ""))
-    print("QWEN REASONING_LENGTH:", len(message.get("reasoning_content") or ""))
+    print(
+        "QWEN REASONING_LENGTH:",
+        len(message.get("reasoning_content") or ""),
+    )
 
     return message.get("content") or ""
 
