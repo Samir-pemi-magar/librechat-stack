@@ -1,0 +1,38 @@
+name: inference-service
+
+services:
+  qwen-inference:
+    image: vllm/vllm-openai:v0.10.2
+    container_name: qwen-inference
+    ports:
+      - "8001:8000"
+    environment:
+      - HF_HOME=/root/.cache/huggingface
+    volumes:
+      - ${HOME}/inference-service/model-cache:/root/.cache/huggingface
+    gpus: all
+    ipc: host
+
+    command:
+      - qwen3-1.7b
+      - --model
+      - Qwen/Qwen3-1.7B
+      - --served-model-name
+      - qwen3-1.7b
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --dtype
+      - half
+      - --max-model-len
+      - "2048"
+      - --gpu-memory-utilization
+      - "0.45"
+      - --enforce-eager
+      - --max-num-seqs
+      - "1"
+      - --enable-auto-tool-choice
+      - --tool-call-parser
+      - hermes
+    restart: unless-stopped
