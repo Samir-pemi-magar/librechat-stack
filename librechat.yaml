@@ -30,3 +30,15 @@ endpoints:
       models:
         default:
           - "palmfuture/Qwen3.6-35B-A3B-GPTQ-Int4"
+    - name: "Qwen 3 1.7B (Local vLLM)"
+      apiKey: "dummy"
+      baseURL: "http://host.docker.internal:8001/v1"
+      models:
+        default:
+          - "qwen3-1.7b"
+    - name: "DocPilot (Fallback)"
+      apiKey: "dummy"
+      baseURL: "http://host.docker.internal:3000/v1"
+      models:
+        default:
+          - "docpilot-qwen3-1.7b"

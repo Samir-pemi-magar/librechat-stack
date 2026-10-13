@@ -5,10 +5,52 @@ import subprocess
 import tempfile
 import uuid
 from pathlib import Path
+from dotenv import load_dotenv
 
-from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import BaseModel, Field
+
+
+load_dotenv(Path(__file__).parent / ".env")
+
+research_bearer = HTTPBearer(
+    scheme_name="InsuranceResearchBearer",
+    auto_error=False,
+)
+
+
+class InsuranceMarketResearchRequest(BaseModel):
+    country: str = Field(default="Nepal", min_length=1, max_length=100)
+    company: str | None = Field(default=None, max_length=200)
+    topic: str | None = Field(default=None, max_length=300)
+    max_results_per_query: int = Field(default=5, ge=1, le=10)
+
+
+def require_insurance_research_token(
+    credentials: HTTPAuthorizationCredentials | None,
+):
+    import hmac
+
+    expected = os.environ.get("INSURANCE_RESEARCH_TOKEN", "")
+    if not expected:
+        raise HTTPException(
+            status_code=503,
+            detail="Insurance research authentication is not configured.",
+        )
+
+    if (
+        credentials is None
+        or credentials.scheme.lower() != "bearer"
+        or not hmac.compare_digest(credentials.credentials, expected)
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or missing bearer token.",
+        )
+
+    return True
 
 
 app = FastAPI(
@@ -1591,6 +1633,112 @@ def make_json_safe(value):
         return None
 
     return value
+
+
+@app.post(
+    "/tools/insurance-market-research",
+    operation_id="insurance_market_research",
+    summary="Research insurance market sources",
+    description=(
+        "Discover potential insurance regulator, industry, and company sources. "
+        "Search results are leads and are not independently verified financial evidence."
+    ),
+    tags=["Research Tools"],
+)
+async def insurance_market_research_tool(
+    request: InsuranceMarketResearchRequest,
+    credentials: HTTPAuthorizationCredentials | None = Depends(research_bearer),
+):
+    require_insurance_research_token(credentials)
+
+    from market_research import search_insurance_market
+
+    try:
+        result = search_insurance_market(
+            country=request.country,
+            company=request.company,
+            topic=request.topic,
+            max_results_per_query=request.max_results_per_query,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return {"success": True, "data": result}
+
+
+@app.get(
+    "/tools/insurance-market-research/openapi.json",
+    include_in_schema=False,
+)
+def insurance_market_research_openapi():
+    return {
+        "openapi": "3.0.3",
+        "info": {
+            "title": "Prarambha Insurance Market Research",
+            "version": "1.0.0",
+            "description": (
+                "Discover candidate sources for insurance research. "
+                "Search results are not independently verified financial evidence."
+            ),
+        },
+        "servers": [{"url": "http://host.docker.internal:9000"}],
+        "paths": {
+            "/tools/insurance-market-research": {
+                "post": {
+                    "operationId": "insurance_market_research",
+                    "summary": "Research insurance market sources",
+                    "security": [{"InsuranceResearchBearer": []}],
+                    "requestBody": {
+                        "required": True,
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "country": {
+                                            "type": "string",
+                                            "default": "Nepal",
+                                            "maxLength": 100,
+                                        },
+                                        "company": {
+                                            "type": "string",
+                                            "nullable": True,
+                                            "maxLength": 200,
+                                        },
+                                        "topic": {
+                                            "type": "string",
+                                            "nullable": True,
+                                            "maxLength": 300,
+                                        },
+                                        "max_results_per_query": {
+                                            "type": "integer",
+                                            "default": 5,
+                                            "minimum": 1,
+                                            "maximum": 10,
+                                        },
+                                    },
+                                }
+                            }
+                        },
+                    },
+                    "responses": {
+                        "200": {"description": "Research results"},
+                        "401": {"description": "Missing or invalid bearer token"},
+                        "503": {"description": "Authentication is not configured"},
+                    },
+                }
+            }
+        },
+        "components": {
+            "securitySchemes": {
+                "InsuranceResearchBearer": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "opaque token",
+                }
+            }
+        },
+    }
 
 
 @app.post("/tools/analyze-workbook")

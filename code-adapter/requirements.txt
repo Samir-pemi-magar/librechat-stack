@@ -10,3 +10,4 @@ python-docx
 reportlab
 matplotlib
 APScheduler
+python-dotenv

@@ -49,6 +49,8 @@ services:
     restart: unless-stopped
 
   local-scraper:
+    build:
+      context: ./local-scraper
     image: prarambha-local-scraper:latest
     container_name: prarambha-local-scraper
     networks:
