@@ -1,4 +1,1 @@
-services:
-  librechat:
-    volumes:
-      - ./librechat.yaml:/app/librechat.yaml:ro
+services: {}

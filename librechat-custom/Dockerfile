@@ -38,18 +38,18 @@ manifest = json.loads(path.read_text())
 
 if not any(t.get("pluginKey") == "internal_data" for t in manifest):
     manifest.append({
-        "name": "Prarambha Internal Data",
+        "name": "Mellow Data",
         "pluginKey": "internal_data",
-        "description": "Retrieve information from Prarambha's local internal data source.",
+        "description": "Retrieve information from Mellow's internal data source.",
         "icon": "",
         "authConfig": []
     })
 
 if not any(t.get("pluginKey") == "workbook_analysis" for t in manifest):
     manifest.append({
-        "name": "Workbook Analysis",
+        "name": "Mellow Analyst",
         "pluginKey": "workbook_analysis",
-        "description": "Analyze company Excel workbooks using the internal Python analysis service.",
+        "description": "Analyze Excel workbooks using Mellow's internal Python analysis service.",
         "icon": "",
         "authConfig": []
     })
@@ -212,9 +212,9 @@ data = json.loads(manifest.read_text())
 
 if not any(tool.get("pluginKey") == "internal_data" for tool in data):
     data.append({
-        "name": "Internal Data",
+        "name": "Mellow Data",
         "pluginKey": "internal_data",
-        "description": "Retrieve information from Prarambha's local internal data source.",
+        "description": "Retrieve information from Mellow's internal data source.",
         "authConfig": []
     })
     manifest.write_text(json.dumps(data, indent=2) + "\n")

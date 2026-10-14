@@ -26,7 +26,7 @@ help:
 	@echo ""
 
 up:
-	docker compose up -d
+	./scripts/start-dev.sh
 
 down:
 	docker compose down

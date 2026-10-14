@@ -22,6 +22,7 @@ endpoints:
       - "web_search"
       - "execute_code"
       - "file_search"
+      - "context"
 
   custom:
     - name: "Qwen 3.6"
@@ -36,9 +37,6 @@ endpoints:
       models:
         default:
           - "qwen3-1.7b"
-    - name: "DocPilot (Fallback)"
-      apiKey: "dummy"
-      baseURL: "http://host.docker.internal:3000/v1"
-      models:
-        default:
-          - "docpilot-qwen3-1.7b"
+      addParams:
+        chat_template_kwargs:
+          enable_thinking: false
